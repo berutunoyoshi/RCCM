@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f5547">
+<title>RCCM 過去問ノート</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{
+  --paper:#fbfbf7; --grid:#e6ebe6; --ink:#1f2b27; --sub:#5d6b66; --line:#cfd8d2;
+  --cover:#2f5547; --cover-ink:#f4f6f1; --red:#c3362b; --ok:#1d6f5a; --warn:#a86a00; --chip:#eef2ee;
+  --card:#ffffff;
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","BIZ UDPGothic","Noto Sans JP","Yu Gothic UI","Meiryo",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#171d1b; --grid:#1f2724; --ink:#e7ece9; --sub:#9aa8a2; --line:#34413c; --cover:#2b4a3f; --cover-ink:#eef3ef;
+    --red:#ff7a6e; --ok:#5fcfa9; --warn:#f0b24a; --chip:#222b28; --card:#1d2522;}
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:20px 20px;line-height:1.7;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 48px}
+header.cover{background:var(--cover);color:var(--cover-ink);padding:22px 20px 18px;border-radius:0 0 6px 6px;position:relative}
+header.cover::after{content:"";position:absolute;left:20px;right:20px;bottom:8px;border-bottom:1px dashed rgba(255,255,255,.35)}
+header.cover h1{margin:0;font-size:1.55rem;letter-spacing:.06em;font-weight:800}
+header.cover p{margin:2px 0 6px;font-size:.85rem;opacity:.85}
+h2{font-size:1rem;margin:26px 0 8px;padding-left:10px;border-left:4px solid var(--cover)}
+.seg{display:flex;border:1.5px solid var(--cover);border-radius:6px;overflow:hidden;background:var(--card)}
+.seg button{flex:1;border:0;background:transparent;padding:10px 4px;font-weight:700;cursor:pointer;font-size:.95rem}
+.seg button+button{border-left:1.5px solid var(--cover)}
+.seg button[aria-pressed=true]{background:var(--cover);color:var(--cover-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:5px 12px;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--cover);border-color:var(--cover);color:var(--cover-ink)}
+.chiprow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.chiprow .link{font-size:.8rem}
+.link{background:none;border:0;color:var(--ok);text-decoration:underline;cursor:pointer;padding:2px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border:1px solid var(--line);border-radius:6px;margin-top:16px}
+.stats div{padding:10px 8px;text-align:center}
+.stats div+div{border-left:1px dashed var(--line)}
+.stats b{display:block;font-size:1.35rem;font-variant-numeric:tabular-nums}
+.stats span{font-size:.75rem;color:var(--sub)}
+.primary{display:block;width:100%;margin-top:22px;padding:15px;border:0;border-radius:6px;background:var(--cover);color:var(--cover-ink);font-size:1.05rem;font-weight:800;cursor:pointer}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary{padding:11px 14px;border:1.5px solid var(--cover);border-radius:6px;background:var(--card);font-weight:700;cursor:pointer}
+.resume{margin-top:16px;background:var(--card);border:1.5px dashed var(--cover);border-radius:6px;padding:12px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.resume small{color:var(--sub)}
+.menu{margin-top:10px;display:grid;gap:8px}
+.menu button{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between}
+.legend{font-size:.82rem;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.legend div{margin:4px 0}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:3px;padding:1px 7px;margin-right:4px;vertical-align:1px;white-space:nowrap}
+.b-none{background:#6b7480;color:#fff}
+.b-est{background:var(--warn);color:#fff}
+.b-doubt{background:var(--red);color:#fff}
+.b-multi{background:#6c4aa8;color:#fff}
+/* quiz */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.bar .prog{flex:1;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.iconbtn{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:6px 10px;cursor:pointer;min-width:44px;min-height:40px}
+.star{font-size:1.25rem;line-height:1;color:var(--sub)}
+.star[aria-pressed=true]{color:#e0a100;border-color:#e0a100}
+.meta{margin:14px 0 8px;font-size:.88rem;color:var(--sub)}
+.meta strong{color:var(--ink)}
+.qimg{background:#fff;border:1px solid var(--line);border-radius:4px;padding:6px;cursor:zoom-in}
+.qimg img{display:block;width:100%;height:auto}
+.zoomhint{font-size:.75rem;color:var(--sub);text-align:right;margin-top:2px}
+.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.choice{position:relative;aspect-ratio:1.4;border:2px solid var(--ink);background:var(--card);border-radius:6px;font-size:1.6rem;font-weight:800;cursor:pointer}
+.choice:disabled{cursor:default}
+.choice.dim{opacity:.45}
+.choice.right{border-color:var(--ok);color:var(--ok)}
+.choice svg{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);pointer-events:none;overflow:visible}
+.choice svg path{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;animation:draw .45s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.choice svg path{animation:none;stroke-dashoffset:0}}
+.verdict{margin-top:16px;font-weight:800;font-size:1.1rem}
+.verdict.ok{color:var(--ok)} .verdict.ng{color:var(--red)} .verdict.na{color:var(--sub)}
+.flagbox{margin-top:12px;border-left:4px solid var(--red);background:var(--card);padding:10px 12px;border-radius:0 6px 6px 0;font-size:.92rem}
+.flagbox.none{border-color:#6b7480} .flagbox.est{border-color:var(--warn)} .flagbox.multi{border-color:#6c4aa8}
+.flagbox b{display:block;margin-bottom:2px}
+.expl{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.expl h3{margin:0 0 6px;font-size:.9rem;color:var(--sub)}
+.expl p{margin:0;white-space:pre-wrap}
+.expl ul{list-style:none;margin:0;padding:0}
+.expl li{display:flex;gap:10px;padding:5px 0;border-top:1px dashed var(--line)}
+.expl li:first-child{border-top:0}
+.expl li .k{font-weight:800;min-width:1.4em}
+.expl li .m{min-width:1.2em;font-weight:800}
+.expl .note{margin-top:10px;font-size:.88rem;color:var(--sub);white-space:pre-wrap}
+.expl img{width:100%;margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:4px}
+.nav{display:flex;gap:10px;margin-top:20px}
+.nav button{flex:1}
+.nav .primary{margin-top:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:6px;font-size:.88rem;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:40;overflow:auto;padding:calc(50px + env(safe-area-inset-top,0px)) 8px 20px}
+.zoom img{width:200%;max-width:none;background:#fff}
+.zoom button{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;background:#fff;color:#000;border:0;border-radius:6px;padding:8px 14px;font-weight:700}
+/* result & list */
+.score{margin-top:20px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px}
+.score b{font-size:2.6rem;font-variant-numeric:tabular-nums}
+.rows{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:6px}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px dashed var(--line);cursor:pointer}
+.row:first-child{border-top:0}
+.row .mk{width:1.6em;text-align:center;font-weight:800}
+.row .mk.ok{color:var(--ok)} .row .mk.ng{color:var(--red)} .row .mk.na{color:var(--sub)}
+.row .t{flex:1;font-size:.9rem}
+.row .t small{display:block;color:var(--sub)}
+.empty{padding:22px;text-align:center;color:var(--sub)}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:8px}
+.setting input[type=checkbox]{width:22px;height:22px;accent-color:var(--cover)}
+.danger{color:var(--red);border-color:var(--red)}
+.foot{margin-top:30px;font-size:.75rem;color:var(--sub);text-align:center}
+:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script>
+<script>
+"use strict";
+const D = window.RCCM, Q = D.q, BY = Object.fromEntries(Q.map(q => [q.id, q]));
+const KEY = "rccm-quiz-v1", L = "abcd";
+const SEC = { "41": "4-1 共通", "42": "4-2 造園" };
+const FLAG = {
+  none:  { cls: "b-none",  label: "解答なし",   title: "この問題は原資料に解答がありません" },
+  est:   { cls: "b-est",   label: "解答なし（推定あり）", title: "原資料に解答がありません" },
+  doubt: { cls: "b-doubt", label: "解答に疑義", title: "解答が曖昧、または原資料の解答に誤りの可能性があります" },
+  multi: { cls: "b-multi", label: "複数正解",   title: "不適切設問のため複数の選択肢が正解扱いです" }
+};
+
+/* ---------- 端末内の記録 ---------- */
+function load() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  s = s || {};
+  s.hist = s.hist || {}; s.fav = s.fav || {};
+  s.set = Object.assign({ autoFav: true }, s.set || {});
+  s.pref = Object.assign({ sec: "41", years: [], cats41: [], cats42: [], pool: "all", order: "random", count: 20 }, s.pref || {});
+  return s;
+}
+let S = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast("この端末では記録を保存できません"); } }
+
+/* ---------- helpers ---------- */
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 1800); }
+function scored(q) { return q.a !== null && q.a !== undefined; }
+function isRight(q, c) { return Array.isArray(q.a) ? q.a.includes(c) : q.a === c; }
+function ansText(q) { return Array.isArray(q.a) ? q.a.map(i => L[i]).join("・") : L[q.a]; }
+function title(q) { return q.s === "41" ? `4-1 共通　平成${q.y}年度 問${q.n}` : `4-2 造園　問題${q.n}`; }
+function shortTitle(q) { return q.s === "41" ? `H${q.y} 問${q.n}` : `造園 問題${q.n}`; }
+function badge(q) { const f = FLAG[q.f]; return f ? `<span class="badge ${f.cls}" title="${f.title}">${f.label}</span>` : ""; }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function render(html) { $("#app").innerHTML = html; window.scrollTo(0, 0); }
+
+/* ---------- 出題対象の絞り込み ---------- */
+function secs() { return S.pref.sec === "both" ? ["41", "42"] : [S.pref.sec]; }
+function filtered() {
+  const p = S.pref, ss = secs();
+  return Q.filter(q => {
+    if (!ss.includes(q.s)) return false;
+    if (q.s === "41" && p.years.length && !p.years.includes(q.y)) return false;
+    const cs = q.s === "41" ? p.cats41 : p.cats42;
+    if (cs.length && !cs.includes(q.c)) return false;
+    const h = S.hist[q.id];
+    if (p.pool === "new" && h) return false;
+    if (p.pool === "wrong" && !(h && h.last === 0)) return false;
+    if (p.pool === "fav" && !S.fav[q.id]) return false;
+    return true;
+  });
+}
+function secStats(ss) {
+  const qs = Q.filter(q => ss.includes(q.s));
+  let done = 0, att = 0, ok = 0;
+  qs.forEach(q => { const h = S.hist[q.id]; if (h) { done++; if (h.last !== -1) { att++; if (h.last === 1) ok++; } } });
+  return { total: qs.length, done, rate: att ? Math.round(ok / att * 100) : null, fav: qs.filter(q => S.fav[q.id]).length };
+}
+
+/* ---------- ホーム ---------- */
+function home() {
+  const p = S.pref, ss = secs(), st = secStats(ss), n = filtered().length;
+  const pressed = b => `aria-pressed="${b}"`;
+  const years = [...new Set(Q.filter(q => q.s === "41").map(q => q.y))];
+  const catBlock = s => {
+    const key = "cats" + s, sel = p[key];
+    return `<div class="chiprow"><h2>分野（${SEC[s]}）</h2><button class="link" data-clear="${key}">${sel.length ? "すべて選択に戻す" : ""}</button></div>
+      <div class="chips">${D.cats[s].map(c => `<button class="chip" data-cat="${s}" data-v="${esc(c)}" ${pressed(!sel.length || sel.includes(c))}>${esc(c)}</button>`).join("")}</div>`;
+  };
+  const ses = S.sess && S.sess.ids.length && S.sess.i < S.sess.ids.length ? S.sess : null;
+  render(`
+  <header class="cover"><h1>RCCM 過去問ノート</h1><p>4-1 共通問題（平成20〜30年度）／ 4-2 造園</p></header>
+  <div class="wrap">
+    ${ses ? `<div class="resume"><div><b>前回の続き</b><br><small>${esc(ses.label)}　${ses.i + 1} / ${ses.ids.length} 問目</small></div><button class="secondary" id="resume">再開する</button></div>` : ""}
+    <h2>部門</h2>
+    <div class="seg" role="group" aria-label="部門">
+      <button data-sec="41" ${pressed(p.sec === "41")}>4-1 共通</button>
+      <button data-sec="42" ${pressed(p.sec === "42")}>4-2 造園</button>
+      <button data-sec="both" ${pressed(p.sec === "both")}>両方</button>
+    </div>
+    <div class="stats">
+      <div><b>${st.done}<small style="font-size:.8rem">/${st.total}</small></b><span>解いた問題</span></div>
+      <div><b>${st.rate === null ? "—" : st.rate + "%"}</b><span>直近の正答率</span></div>
+      <div><b>${st.fav}</b><span>お気に入り</span></div>
+    </div>
+    ${ss.includes("41") ? `<div class="chiprow"><h2>年度（4-1）</h2><button class="link" data-clear="years">${p.years.length ? "すべて選択に戻す" : ""}</button></div>
+      <div class="chips">${years.map(y => `<button class="chip" data-year="${y}" ${pressed(!p.years.length || p.years.includes(y))}>平成${y}年度</button>`).join("")}</div>` : ""}
+    ${ss.map(catBlock).join("")}
+    <h2>出題する問題</h2>
+    <div class="seg" role="group" aria-label="出題する問題">
+      ${[["all", "すべて"], ["new", "未解答"], ["wrong", "前回不正解"], ["fav", "お気に入り"]].map(([k, v]) => `<button data-pool="${k}" ${pressed(p.pool === k)}>${v}</button>`).join("")}
+    </div>
+    <h2>順番と問題数</h2>
+    <div class="seg" role="group" aria-label="順番">
+      <button data-order="random" ${pressed(p.order === "random")}>ランダム</button>
+      <button data-order="seq" ${pressed(p.order === "seq")}>番号順</button>
+    </div>
+    <div class="seg" role="group" aria-label="問題数" style="margin-top:8px">
+      ${[10, 20, 50, 0].map(c => `<button data-count="${c}" ${pressed(p.count === c)}>${c ? c + "問" : "全部"}</button>`).join("")}
+    </div>
+    <button class="primary" id="start" ${n ? "" : "disabled"}>${n ? `${p.count && p.count < n ? p.count : n}問を始める（対象 ${n}問）` : "条件に合う問題がありません"}</button>
+    <div class="menu">
+      <button id="toFav"><span>★ お気に入り一覧</span><span>${Object.keys(S.fav).length}問</span></button>
+      <button id="toSet"><span>設定・記録のバックアップ</span><span>›</span></button>
+    </div>
+    <h2>表示の見かた</h2>
+    <div class="legend">
+      <div><span class="badge b-none">解答なし</span>原資料に解答がなく、正解を判定しない問題です（成績には含めません）。</div>
+      <div><span class="badge b-est">解答なし（推定あり）</span>原資料に解答がない問題です。採点はせず、参考として推定解答と根拠を表示します。</div>
+      <div><span class="badge b-doubt">解答に疑義</span>原資料の解答が誤りと考えられる、または解答が曖昧な問題です。解答後に理由を表示します。</div>
+      <div><span class="badge b-multi">複数正解</span>不適切設問として複数の選択肢が正解扱いになった問題です。</div>
+      <div style="margin-top:8px">4-1の解答は原資料の「推定正解」に基づきます。間違えた問題は自動でお気に入りに入ります（設定で変更できます）。</div>
+    </div>
+    <p class="foot" id="swstate"></p>
+  </div>`);
+  const sp = (k, v) => { S.pref[k] = v; save(); home(); };
+  document.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => sp("sec", b.dataset.sec));
+  document.querySelectorAll("[data-pool]").forEach(b => b.onclick = () => sp("pool", b.dataset.pool));
+  document.querySelectorAll("[data-order]").forEach(b => b.onclick = () => sp("order", b.dataset.order));
+  document.querySelectorAll("[data-count]").forEach(b => b.onclick = () => sp("count", +b.dataset.count));
+  document.querySelectorAll("[data-clear]").forEach(b => b.onclick = () => sp(b.dataset.clear, []));
+  document.querySelectorAll("[data-year]").forEach(b => b.onclick = () => sp("years", toggleIn(p.years, +b.dataset.year, years)));
+  document.querySelectorAll("[data-cat]").forEach(b => b.onclick = () => { const k = "cats" + b.dataset.cat; sp(k, toggleIn(p[k], b.dataset.v, D.cats[b.dataset.cat])); });
+  $("#start").onclick = () => {
+    let ids = filtered().map(q => q.id);
+    if (S.pref.order === "random") shuffle(ids);
+    if (S.pref.count) ids = ids.slice(0, S.pref.count);
+    const label = `${S.pref.sec === "both" ? "4-1・4-2" : SEC[S.pref.sec]}／${{ all: "すべて", new: "未解答", wrong: "前回不正解", fav: "お気に入り" }[S.pref.pool]}`;
+    startSession(ids, label);
+  };
+  if ($("#resume")) $("#resume").onclick = () => quiz();
+  $("#toFav").onclick = favList;
+  $("#toSet").onclick = settings;
+  showSWState();
+}
+// 空配列＝すべて選択。タップで個別に外す／入れる
+function toggleIn(sel, v, all) {
+  let cur = sel.length ? sel.slice() : all.slice();
+  cur = cur.includes(v) ? cur.filter(x => x !== v) : cur.concat(v);
+  return cur.length === all.length ? [] : cur.length ? cur : [v];
+}
+function startSession(ids, label) { S.sess = { ids, i: 0, picks: {}, label }; save(); quiz(); }
+
+/* ---------- 出題 ---------- */
+const MARK_O = `<svg viewBox="0 0 100 70" preserveAspectRatio="none"><path d="M50 6 C80 5 95 20 94 36 C93 55 72 65 48 64 C22 63 6 52 7 35 C8 18 26 7 55 9" stroke="var(--red)"/></svg>`;
+const MARK_X = `<svg viewBox="0 0 100 70" preserveAspectRatio="none"><path d="M18 10 L82 60 M82 10 L18 60" stroke="var(--red)"/></svg>`;
+function quiz() {
+  const ss = S.sess; if (!ss) return home();
+  if (ss.i >= ss.ids.length) return result();
+  const q = BY[ss.ids[ss.i]], pick = ss.picks[q.id];
+  const done = pick !== undefined;
+  const fav = !!S.fav[q.id];
+  let choices = "";
+  for (let c = 0; c < 4; c++) {
+    let cls = "choice", mark = "";
+    if (done) {
+      if (c === pick) mark = !scored(q) ? MARK_O.replace("var(--red)", "var(--sub)") : isRight(q, c) ? MARK_O : MARK_X;
+      if (scored(q) && isRight(q, c)) cls += " right";
+      else if (c !== pick) cls += " dim";
+    }
+    choices += `<button class="${cls}" data-c="${c}" ${done ? "disabled" : ""} aria-label="選択肢 ${L[c]}">${L[c]}${mark}</button>`;
+  }
+  render(`
+  <div class="wrap">
+    <div class="bar">
+      <button class="iconbtn" id="back" aria-label="ホームに戻る">‹ ホーム</button>
+      <div class="prog">${ss.i + 1} / ${ss.ids.length}</div>
+      <button class="iconbtn star" id="fav" aria-pressed="${fav}" aria-label="お気に入り">${fav ? "★" : "☆"}</button>
+    </div>
+    <div class="meta">${badge(q)}<strong>${title(q)}</strong>　${esc(q.c)}</div>
+    <div class="qimg" id="qimg"><img src="${q.img}" alt="${esc(title(q))} の問題文"></div>
+    <div class="zoomhint">問題文をタップすると拡大します</div>
+    <div class="choices">${choices}</div>
+    ${done ? answerBlock(q, pick) : (q.f === "none" || q.f === "est") ? `<div class="flagbox ${q.f}"><b>${FLAG[q.f].title}</b>選択しても正誤は判定されません。</div>` : ""}
+    <div class="nav">
+      <button class="secondary" id="prev" ${ss.i ? "" : "disabled"}>前へ</button>
+      <button class="primary" id="next">${ss.i + 1 === ss.ids.length ? (done ? "結果を見る" : "スキップして結果へ") : (done ? "次へ" : "スキップ")}</button>
+    </div>
+  </div>`);
+  $("#back").onclick = home;
+  $("#fav").onclick = () => { toggleFav(q.id); quiz(); };
+  $("#qimg").onclick = () => zoom(q.img);
+  document.querySelectorAll("[data-c]").forEach(b => b.onclick = () => answer(q, +b.dataset.c));
+  $("#prev").onclick = () => { ss.i--; save(); quiz(); };
+  $("#next").onclick = () => { ss.i++; save(); quiz(); };
+  document.querySelectorAll(".expl img").forEach(im => im.onclick = () => zoom(im.getAttribute("src")));
+}
+function answer(q, c) {
+  const ss = S.sess; ss.picks[q.id] = c;
+  const h = S.hist[q.id] || { n: 0, c: 0 };
+  h.n++; h.t = Date.now();
+  if (!scored(q)) h.last = -1;
+  else if (isRight(q, c)) { h.c++; h.last = 1; }
+  else {
+    h.last = 0;
+    if (S.set.autoFav && !S.fav[q.id]) { S.fav[q.id] = Date.now(); toast("間違えた問題をお気に入りに追加しました"); }
+  }
+  S.hist[q.id] = h; save(); quiz();
+}
+function answerBlock(q, pick) {
+  let v;
+  if (!scored(q)) v = `<div class="verdict na">この問題は原資料に解答がありません</div>`;
+  else if (isRight(q, pick)) v = `<div class="verdict ok">正解　${Array.isArray(q.a) ? `（正解扱い：${ansText(q)}）` : ""}</div>`;
+  else v = `<div class="verdict ng">不正解　正解は ${ansText(q)}</div>`;
+  let flag = "";
+  if (q.f === "none") flag = `<div class="flagbox none"><b>解答なし</b>原資料に解答の記載がないため、正解を設定していません。</div>`;
+  if (q.f === "est") flag = `<div class="flagbox est"><b>解答なし（参考：推定解答 ${L[q.est]}）</b>原資料に解答の記載がないため採点していません。推定解答は作成者による参考情報で、確認が必要です。</div>`;
+  if (q.f === "doubt") flag = `<div class="flagbox"><b>解答に疑義があります</b>${esc(q.ft)}</div>`;
+  if (q.f === "multi") flag = `<div class="flagbox multi"><b>複数正解の問題</b>${esc(q.ft)}</div>`;
+  let body = "";
+  if (Array.isArray(q.e)) {
+    const items = q.e.map((t, i) => {
+      t = (t || "").trim(); if (!t) return "";
+      const m = t.match(/^[〇○◯×✕△]/); const mk = m ? m[0].replace(/[○◯]/, "〇").replace("✕", "×") : "";
+      const rest = m ? t.slice(1).trim() : t;
+      return `<li><span class="k">${L[i]}</span><span class="m" style="color:${mk === "×" ? "var(--red)" : mk === "〇" ? "var(--ok)" : "var(--warn)"}">${mk}</span><span>${esc(rest)}</span></li>`;
+    }).join("");
+    if (items) body += `<ul>${items}</ul>`;
+  } else if (q.e) body += `<p>${esc(q.e)}</p>`;
+  const noteLabel = q.s === "41" ? "出題履歴" : (q.f === "est" ? "推定の根拠" : "補足");
+  if (q.nt) body += `<div class="note">${noteLabel}：${esc(q.nt)}</div>`;
+  if (q.ei) body += `<img src="${q.ei}" alt="参考の図表">`;
+  const head = q.s === "41" ? "解説（原資料の推定正解と解説）" : "選択肢ごとの解説（原資料の注記）";
+  return v + flag + (body ? `<div class="expl"><h3>${head}</h3>${body}</div>` : "");
+}
+function toggleFav(id) {
+  if (S.fav[id]) { delete S.fav[id]; toast("お気に入りから外しました"); }
+  else { S.fav[id] = Date.now(); toast("お気に入りに追加しました"); }
+  save();
+}
+function zoom(src) {
+  const z = document.createElement("div");
+  z.className = "zoom"; z.innerHTML = `<button>閉じる</button><img src="${src}" alt="拡大した図">`;
+  z.onclick = e => { if (e.target.tagName === "BUTTON" || e.target === z) z.remove(); };
+  document.body.appendChild(z);
+}
+
+/* ---------- 結果 ---------- */
+function result() {
+  const ss = S.sess, qs = ss.ids.map(id => BY[id]);
+  let ok = 0, att = 0;
+  const rows = qs.map((q, i) => {
+    const p = ss.picks[q.id];
+    let mk = "–", cls = "na";
+    if (p !== undefined && scored(q)) { att++; if (isRight(q, p)) { ok++; mk = "○"; cls = "ok"; } else { mk = "×"; cls = "ng"; } }
+    else if (p !== undefined) mk = "・";
+    return `<div class="row" data-i="${i}"><span class="mk ${cls}">${mk}</span><span class="t">${badge(q)}${shortTitle(q)}<small>${esc(q.c)}</small></span>${S.fav[q.id] ? "★" : ""}</div>`;
+  }).join("");
+  const wrong = qs.filter(q => ss.picks[q.id] !== undefined && scored(q) && !isRight(q, ss.picks[q.id])).map(q => q.id);
+  render(`
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back">‹ ホーム</button><div class="prog">結果</div><span style="min-width:44px"></span></div>
+    <div class="score"><b>${ok}</b> / ${att} 問正解<br><small style="color:var(--sub)">${att ? Math.round(ok / att * 100) + "%" : ""}　解答なしの問題とスキップした問題は数えていません</small></div>
+    <div class="nav">
+      <button class="secondary" id="again" ${wrong.length ? "" : "disabled"}>間違えた${wrong.length}問をもう一度</button>
+      <button class="primary" id="home">ホームへ</button>
+    </div>
+    <div class="rows">${rows}</div>
+  </div>`);
+  $("#back").onclick = $("#home").onclick = () => { S.sess = null; save(); home(); };
+  $("#again").onclick = () => startSession(shuffle(wrong.slice()), "間違えた問題をもう一度");
+  document.querySelectorAll(".row").forEach(r => r.onclick = () => { ss.i = +r.dataset.i; save(); quiz(); });
+}
+
+/* ---------- お気に入り ---------- */
+function favList() {
+  const ids = Object.keys(S.fav).filter(id => BY[id]).sort((a, b) => S.fav[b] - S.fav[a]);
+  const rows = ids.map(id => {
+    const q = BY[id], h = S.hist[id];
+    const st = h ? (h.last === 1 ? `<span class="mk ok">○</span>` : h.last === 0 ? `<span class="mk ng">×</span>` : `<span class="mk na">・</span>`) : `<span class="mk na">–</span>`;
+    return `<div class="row" data-id="${id}">${st}<span class="t">${badge(q)}${title(q)}<small>${esc(q.c)}${h ? `　${h.c}/${h.n}回正解` : ""}</small></span><button class="iconbtn" data-rm="${id}" aria-label="お気に入りから外す">外す</button></div>`;
+  }).join("");
+  render(`
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back">‹ ホーム</button><div class="prog">お気に入り ${ids.length}問</div><span style="min-width:44px"></span></div>
+    <button class="primary" id="play" ${ids.length ? "" : "disabled"}>お気に入りを出題する（ランダム）</button>
+    <div class="rows">${rows || `<div class="empty">まだありません。間違えた問題や、問題画面の ☆ を押した問題がここに入ります。</div>`}</div>
+  </div>`);
+  $("#back").onclick = home;
+  $("#play").onclick = () => startSession(shuffle(ids.slice()), "お気に入り");
+  document.querySelectorAll("[data-rm]").forEach(b => b.onclick = e => { e.stopPropagation(); delete S.fav[b.dataset.rm]; save(); favList(); });
+  document.querySelectorAll(".row[data-id]").forEach(r => r.onclick = () => startSession([r.dataset.id], "お気に入りから1問"));
+}
+
+/* ---------- 設定 ---------- */
+function settings() {
+  render(`
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back">‹ ホーム</button><div class="prog">設定</div><span style="min-width:44px"></span></div>
+    <label class="setting"><span>間違えた問題を自動でお気に入りに入れる</span><input type="checkbox" id="autoFav" ${S.set.autoFav ? "checked" : ""}></label>
+    <h2>記録のバックアップ</h2>
+    <p style="font-size:.88rem;color:var(--sub);margin:0 0 6px">成績とお気に入りはこの端末のブラウザ内に保存されています。ブラウザのデータを消すと記録も消えるため、機種変更の前などに書き出してください。</p>
+    <div class="nav" style="margin-top:6px">
+      <button class="secondary" id="exp">ファイルに書き出す</button>
+      <button class="secondary" id="imp">ファイルから読み込む</button>
+    </div>
+    <input type="file" id="file" accept="application/json,.json" hidden>
+    <h2>記録の消去</h2>
+    <div class="nav" style="margin-top:6px">
+      <button class="secondary danger" id="clrHist">成績を消す</button>
+      <button class="secondary danger" id="clrFav">お気に入りを空にする</button>
+    </div>
+    <p class="foot">収録：4-1 共通 ${Q.filter(q => q.s === "41").length}問／4-2 造園 ${Q.filter(q => q.s === "42").length}問　データ版 ${D.v}</p>
+  </div>`);
+  $("#back").onclick = home;
+  $("#autoFav").onchange = e => { S.set.autoFav = e.target.checked; save(); };
+  $("#exp").onclick = () => {
+    const blob = new Blob([JSON.stringify({ app: "rccm-quiz", at: new Date().toISOString(), hist: S.hist, fav: S.fav, set: S.set })], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = `rccm-record-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+    toast("記録を書き出しました");
+  };
+  $("#imp").onclick = () => $("#file").click();
+  $("#file").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (d.app !== "rccm-quiz") throw 0;
+      S.hist = Object.assign(S.hist, d.hist || {}); S.fav = Object.assign(S.fav, d.fav || {});
+      save(); toast("記録を読み込みました");
+    } catch (_) { toast("このファイルは読み込めません。書き出した .json を選んでください"); }
+  };
+  $("#clrHist").onclick = () => { if (confirm("成績をすべて消します。よろしいですか？")) { S.hist = {}; S.sess = null; save(); toast("成績を消しました"); } };
+  $("#clrFav").onclick = () => { if (confirm("お気に入りを空にします。よろしいですか？")) { S.fav = {}; save(); toast("お気に入りを空にしました"); } };
+}
+
+/* ---------- オフライン対応 ---------- */
+function showSWState(msg) {
+  const el = $("#swstate"); if (!el) return;
+  el.textContent = msg || (showSWState.msg || (navigator.onLine ? "" : "オフラインで動作中"));
+}
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then(() => {
+    showSWState.msg = "オフラインで使える状態です"; showSWState();
+  }).catch(() => { showSWState.msg = "オフライン用の準備に失敗しました（オンラインでは使えます）"; showSWState(); });
+}
+document.addEventListener("keydown", e => {
+  if (!S.sess || !$(".choices")) return;
+  const i = "abcd1234".indexOf(e.key.toLowerCase());
+  const btn = i >= 0 && document.querySelector(`[data-c="${i % 4}"]:not([disabled])`);
+  if (btn) btn.click();
+  else if (e.key === "Enter" && $("#next")) $("#next").click();
+});
+home();
+</script>
+</body>
+</html>
