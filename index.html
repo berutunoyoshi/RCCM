@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#2f5547">
 <title>RCCM 過去問ノート</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{
@@ -128,8 +128,13 @@ h2{font-size:1rem;margin:26px 0 8px;padding-left:10px;border-left:4px solid var(
 <div id="app"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="data.js"></script>
+<script src="images-1.js"></script>
+<script src="images-2.js"></script>
+<script src="images-3.js"></script>
+<script src="images-4.js"></script>
 <script>
 "use strict";
+const IMG = p => (window.RCCM_IMG || {})[p] || p;
 const D = window.RCCM, Q = D.q, BY = Object.fromEntries(Q.map(q => [q.id, q]));
 const KEY = "rccm-quiz-v1", L = "abcd";
 const SEC = { "41": "4-1 共通", "42": "4-2 造園" };
@@ -300,7 +305,7 @@ function quiz() {
       <button class="iconbtn star" id="fav" aria-pressed="${fav}" aria-label="お気に入り">${fav ? "★" : "☆"}</button>
     </div>
     <div class="meta">${badge(q)}<strong>${title(q)}</strong>　${esc(q.c)}</div>
-    <div class="qimg" id="qimg"><img src="${q.img}" alt="${esc(title(q))} の問題文"></div>
+    <div class="qimg" id="qimg"><img src="${IMG(q.img)}" alt="${esc(title(q))} の問題文"></div>
     <div class="zoomhint">問題文をタップすると拡大します</div>
     <div class="choices">${choices}</div>
     ${done ? answerBlock(q, pick) : (q.f === "none" || q.f === "est") ? `<div class="flagbox ${q.f}"><b>${FLAG[q.f].title}</b>選択しても正誤は判定されません。</div>` : ""}
@@ -311,7 +316,7 @@ function quiz() {
   </div>`);
   $("#back").onclick = home;
   $("#fav").onclick = () => { toggleFav(q.id); quiz(); };
-  $("#qimg").onclick = () => zoom(q.img);
+  $("#qimg").onclick = () => zoom(IMG(q.img));
   document.querySelectorAll("[data-c]").forEach(b => b.onclick = () => answer(q, +b.dataset.c));
   $("#prev").onclick = () => { ss.i--; save(); quiz(); };
   $("#next").onclick = () => { ss.i++; save(); quiz(); };
@@ -351,7 +356,7 @@ function answerBlock(q, pick) {
   } else if (q.e) body += `<p>${esc(q.e)}</p>`;
   const noteLabel = q.s === "41" ? "出題履歴" : (q.f === "est" ? "推定の根拠" : "補足");
   if (q.nt) body += `<div class="note">${noteLabel}：${esc(q.nt)}</div>`;
-  if (q.ei) body += `<img src="${q.ei}" alt="参考の図表">`;
+  if (q.ei) body += `<img src="${IMG(q.ei)}" alt="参考の図表">`;
   const head = q.s === "41" ? "解説（原資料の推定正解と解説）" : "選択肢ごとの解説（原資料の注記）";
   return v + flag + (body ? `<div class="expl"><h3>${head}</h3>${body}</div>` : "");
 }
